@@ -12,7 +12,11 @@ concurrency:
 
 jobs:
   e2e:
-    runs-on: ${{ github.repository == 'antiwork/helper' && 'ubicloud-standard-2' || 'ubuntu-latest' }}
+    strategy:
+      matrix:
+        include:
+          - runner: ${{ github.repository == 'antiwork/helper' && 'ubicloud-standard-2' || 'ubuntu-latest' }}
+    runs-on: ${{ matrix.runner }}
     timeout-minutes: 60
     env:
       CI: true

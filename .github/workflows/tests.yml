@@ -14,7 +14,11 @@ concurrency:
 
 jobs:
   build:
-    runs-on: ${{ github.repository == 'antiwork/helper' && 'ubicloud-standard-2' || 'ubuntu-latest' }}
+    strategy:
+      matrix:
+        include:
+          - runner: ${{ github.repository == 'antiwork/helper' && 'ubicloud-standard-2' || 'ubuntu-latest' }}
+    runs-on: ${{ matrix.runner }}
 
     steps:
       - name: Check out repository code
