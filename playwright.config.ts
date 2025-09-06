@@ -12,7 +12,7 @@ export default defineConfig({
   /* Retry on CI only */
   retries: process.env.CI ? 2 : 1,
   /* Opt out of parallel tests on CI for better stability */
-  workers: process.env.CI ? 1 : undefined,
+  workers: process.env.CI ? 2 : undefined,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: [["html", { open: process.env.CI ? "never" : "on-failure" }]],
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
@@ -60,6 +60,8 @@ export default defineConfig({
   // Make sure your port matches the one in your `.env.test.local` file
   webServer: {
     command: "pnpm run with-test-env next dev --port 3020 --turbopack",
+    stderr: "ignore",
+    stdout: "ignore",
     url: process.env.PLAYWRIGHT_BASE_URL || "http://localhost:3020",
     reuseExistingServer: true,
     ignoreHTTPSErrors: true,
