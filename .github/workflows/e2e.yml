@@ -21,6 +21,7 @@ jobs:
       CI: true
       OPENAI_API_KEY: test-openai-api-key
       FIRECRAWL_API_KEY: test-firecrawl-api-key
+      SUPABASE_START_ARGS: -x imgproxy,mailpit,studio,edge-runtime,logflare,vector,supavisor
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -48,6 +49,11 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
+      - name: Cache Docker images for Supabase
+        uses: ScribeMD/docker-cache@0.5.0
+        with:
+          key: docker-${{ runner.os }}-${{ hashFiles('.github/workflows/e2e.yml') }}
+
       - name: Install Playwright Browsers
         run: pnpm playwright install --with-deps chromium
         if: steps.playwright-cache.outputs.cache-hit != 'true'
@@ -55,12 +61,7 @@ jobs:
       - name: Setup E2E test environment
         run: ./scripts/setup-e2e-tests.sh
 
-      - name: Run fail-fast on changed Playwright tests
-        if: github.event_name == 'pull_request'
-        run: ./scripts/e2e.sh playwright test --only-changed=origin/${{ github.base_ref }}
-
       - name: Run full Playwright suite
-        if: github.event_name == 'push'
         run: ./scripts/e2e.sh
 
       - name: Upload Playwright HTML report

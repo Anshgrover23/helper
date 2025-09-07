@@ -62,7 +62,10 @@ else
 fi
 
 echo "🎉 Starting Supabase services..."
-pnpm run with-test-env pnpm supabase start
+if [ -n "${SUPABASE_START_ARGS}" ]; then
+  echo "Using custom Supabase start args: ${SUPABASE_START_ARGS}"
+fi
+pnpm run with-test-env pnpm supabase start ${SUPABASE_START_ARGS}
 
 echo "⏳ Waiting for Auth service to initialize..."
 sleep 5
